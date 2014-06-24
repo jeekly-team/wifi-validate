@@ -13,26 +13,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jyzn.wifi.validate;
 
+import javax.sql.DataSource;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
-@Configuration
-@ComponentScan
-/*
-EnableJpaRepositories 注解，表明Spring Data JPA遍历任何实现了org.springframework.data.repository.Repository接口的接口，然后自动生成它的实现类
-*/
-@EnableJpaRepositories
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@EnableTransactionManagement
 @EnableAutoConfiguration
+@Configuration
+@ComponentScan(basePackages = "com.jyzn.wifi.validate")
+@ImportResource("classpath:setup-database.xml")
+@EnableJpaRepositories
 public class SampleDataJpaApplication {
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(SampleDataJpaApplication.class, args);
-	}
+    @Autowired
+    DataSource dataSource;
 
+    @Bean
+    public LocalSessionFactoryBean sessionFactory() {
+        LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setPackagesToScan(new String[]{"com.jyzn.wifi.validate.domain"});
+        return sessionFactory;
+    }
+
+    @Bean
+    @Autowired
+    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
+        HibernateTransactionManager txManager = new HibernateTransactionManager();
+        txManager.setSessionFactory(sessionFactory);
+        return txManager;
+    }
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(SampleDataJpaApplication.class, args);
+    }
+
+    /*
+     @Bean
+     public DataSource dataSource() {
+     EmbeddedDatabaseBuilder embeddedDatabaseBuilder = new EmbeddedDatabaseBuilder();
+     return embeddedDatabaseBuilder.setType(EmbeddedDatabaseType.H2).build();
+
+     }
+
+     @Bean
+     public LocalSessionFactoryBean sessionFactory() {
+     LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+     sessionFactory.setDataSource(dataSource());
+     sessionFactory.setPackagesToScan(new String[]{"com.jyzn.wifi.validate.domain"});
+     return sessionFactory;
+     }
+
+     @Bean
+     public HibernateTransactionManager transactionManager() {
+     HibernateTransactionManager txManager = new HibernateTransactionManager();
+     txManager.setSessionFactory(sessionFactory().getObject());
+     txManager.setHibernateManagedSession(true);
+     return txManager;
+     }
+     */
 }

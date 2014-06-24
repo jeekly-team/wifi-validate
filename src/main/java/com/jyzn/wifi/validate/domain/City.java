@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.jyzn.wifi.validate.domain;
 
 import java.io.Serializable;
@@ -24,53 +23,81 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class City implements Serializable {
+public class City extends IdEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    /*
+     @Id
+     @GeneratedValue
+     private Long id;
+     */
+    @Column(nullable = false)
+    private String name;
 
-	@Id
-	@GeneratedValue
-	private Long id;
+    @Column(nullable = false)
+    private String state;
 
-	@Column(nullable = false)
-	private String name;
+    @Column(nullable = false)
+    private String country;
 
-	@Column(nullable = false)
-	private String state;
+    @Column(nullable = false)
+    private String map;
 
-	@Column(nullable = false)
-	private String country;
+    protected City() {
+    }
 
-	@Column(nullable = false)
-	private String map;
+    public City(String name, String country) {
+        super();
+        this.name = name;
+        this.country = country;
+    }
 
-	protected City() {
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public City(String name, String country) {
-		super();
-		this.name = name;
-		this.country = country;
-	}
+    public String getState() {
+        return this.state;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getCountry() {
+        return this.country;
+    }
 
-	public String getState() {
-		return this.state;
-	}
+    public String getMap() {
+        return this.map;
+    }
 
-	public String getCountry() {
-		return this.country;
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getMap() {
-		return this.map;
-	}
+    /**
+     * @param state the state to set
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	@Override
-	public String toString() {
-		return getName() + "," + getState() + "," + getCountry();
-	}
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /**
+     * @param map the map to set
+     */
+    public void setMap(String map) {
+        this.map = map;
+    }
+
+    @Override
+    public String toString() {
+        return getName() + "," + getState() + "," + getCountry();
+    }
 }
