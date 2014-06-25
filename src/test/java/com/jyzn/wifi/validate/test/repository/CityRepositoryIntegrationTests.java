@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.jyzn.wifi.validate.test.service;
+package com.jyzn.wifi.validate.test.repository;
 
 import com.jyzn.wifi.validate.SampleDataJpaApplication;
 import com.jyzn.wifi.validate.domain.City;

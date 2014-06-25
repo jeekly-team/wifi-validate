@@ -16,9 +16,11 @@
 package com.jyzn.wifi.validate.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 
 @Entity
+@Table(name = "city")
 public class City extends IdEntity {
 
     private static final long serialVersionUID = 1L;

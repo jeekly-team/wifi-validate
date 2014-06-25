@@ -25,10 +25,10 @@ import org.springframework.data.repository.Repository;
  *
  * @author zyt 
  * Repository： 仅仅是一个标识，表明任何继承它的均为仓库接口类，方便Spring自动扫描识别
- * CrudRepository： 继承Repository，实现了一组CRUD相关的方法 PagingAndSortingRepository：
- * 继承CrudRepository，实现了一组分页排序相关的方法 JpaRepository：
- * 继承PagingAndSortingRepository，实现一组JPA规范相关的方法 JpaSpecificationExecutor：
- * 比较特殊，不属于Repository体系，实现一组JPA Criteria查询相关的方法
+ * CrudRepository： 继承Repository，实现了一组CRUD相关的方法 
+ * PagingAndSortingRepository：继承CrudRepository，实现了一组分页排序相关的方法 
+ * JpaRepository：继承PagingAndSortingRepository，实现一组JPA规范相关的方法 
+ * JpaSpecificationExecutor：比较特殊，不属于Repository体系，实现一组JPA Criteria查询相关的方法
  */
 public interface CityRepository extends Repository<City, Long> {
 
