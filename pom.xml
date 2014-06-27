@@ -19,6 +19,7 @@
         <java.version>1.7</java.version>
         <springside.version>4.2.3-SNAPSHOT</springside.version>
         <guava.version>17.0</guava.version>
+        <jackson.version>2.4.0</jackson.version>
     </properties>
     <dependencies>
         <dependency>
@@ -64,6 +65,11 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
     </dependencies>
     <build>

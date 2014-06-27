@@ -6,8 +6,10 @@
 package com.jyzn.wifi.validate.service;
 
 import com.google.common.collect.Maps;
+import com.jyzn.wifi.validate.domain.ValidateCodeLog;
 import com.jyzn.wifi.validate.domain.ValidateLog;
 import com.jyzn.wifi.validate.domain.WifiUser;
+import com.jyzn.wifi.validate.repository.ValidateCodeLogDao;
 import com.jyzn.wifi.validate.repository.ValidateLogDao;
 import com.jyzn.wifi.validate.repository.WifiUserDao;
 import java.util.List;
@@ -25,14 +27,16 @@ public class ValidateService {
 
     private final ValidateLogDao validatelogdao;
     private final WifiUserDao wifiuserdao;
-
+    private final ValidateCodeLogDao vcdao;
     /*
      setValidateLogDao 是无效的! 必须使用以下方式
      */
+
     @Autowired
-    public ValidateService(ValidateLogDao validatelogdao, WifiUserDao wifiuserdao) {
+    public ValidateService(ValidateLogDao validatelogdao, WifiUserDao wifiuserdao, ValidateCodeLogDao vcdao) {
         this.validatelogdao = validatelogdao;
         this.wifiuserdao = wifiuserdao;
+        this.vcdao = vcdao;
 
     }
 
@@ -63,8 +67,20 @@ public class ValidateService {
         return spec;
     }
 
+    public WifiUser findWifiUserByName(String Name) {
+        return this.wifiuserdao.findByName(Name);
+    }
+
     public void saveWifiUser(WifiUser entity) {
         this.wifiuserdao.save(entity);
+    }
+
+    public void saveValidateLog(ValidateLog entity) {
+        validatelogdao.save(entity);
+    }
+
+    public void saveValidateCodeLog(ValidateCodeLog entity) {
+        vcdao.save(entity);
     }
 
     public List<ValidateLog> getAllvalidatelogdao() {

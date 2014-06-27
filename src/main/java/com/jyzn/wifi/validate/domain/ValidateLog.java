@@ -5,6 +5,7 @@
  */
 package com.jyzn.wifi.validate.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +26,20 @@ public class ValidateLog extends StringIdEntity {
     private String type; //本次验证类型如MSG,WX...
 
     private String sid; //商户ID
-    
+
+    public ValidateLog() {
+
+    }
+
+    public ValidateLog(WifiUser wifiuser, String sid, String type, Date dt) {
+        super();
+        this.wifiuser = wifiuser;
+        this.sid = sid;
+        this.type = type;
+        this.dt = dt;
+    }
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")
     @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     public Date getDt() {
@@ -35,6 +49,7 @@ public class ValidateLog extends StringIdEntity {
     public void setDt(Date dt) {
         this.dt = dt;
     }
+
     // JPA 基于USER_ID列的多对一关系定义
     @ManyToOne
     @JoinColumn(name = "wifiuser_id")

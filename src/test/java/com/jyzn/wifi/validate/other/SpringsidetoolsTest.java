@@ -30,7 +30,7 @@ public class SpringsidetoolsTest {
         String prefix = "";
         String unprefixed = paramName.substring(prefix.length());
         String[] values = {"18691525183"};
-        Map<String, Object> params = new TreeMap<String, Object>();
+        Map<String, Object> params = new TreeMap<>();
         if ((values == null) || (values.length == 0)) {
         } else if (values.length > 1) {
             params.put(unprefixed, values);
@@ -38,9 +38,9 @@ public class SpringsidetoolsTest {
             params.put(unprefixed, values[0]);
         }
 
-         params.put("EQ_sid","001");
+        params.put("EQ_sid", "001");
         Map<String, SearchFilter> filters = SearchFilter.parse(params);
-        //Specification<ValidateLog> spec = DynamicSpecifications.bySearchFilter(filters.values(), ValidateLog.class);
+
         assertNotNull(filters);
 
     }

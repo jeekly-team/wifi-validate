@@ -23,6 +23,12 @@ public class WifiUser extends StringIdEntity {
         this.id = id;
     }
 
+    public WifiUser(String name, String category) {
+        super();
+        this.name = name;
+        this.category = category;
+    }
+
     public String getName() {
         return name;
     }

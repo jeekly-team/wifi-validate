@@ -6,11 +6,14 @@
 
 package com.jyzn.wifi.validate.repository;
 
-import com.jyzn.wifi.validate.domain.WifiUser;
+import com.jyzn.wifi.validate.domain.ValidateCodeLog;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
-public interface WifiUserDao extends CrudRepository<WifiUser, String>,JpaSpecificationExecutor<WifiUser>{
-    WifiUser findByName(String Name);
+/**
+ *
+ * @author zyt
+ */
+public interface ValidateCodeLogDao extends CrudRepository<ValidateCodeLog, String>,JpaSpecificationExecutor<ValidateCodeLog>{
     
 }
