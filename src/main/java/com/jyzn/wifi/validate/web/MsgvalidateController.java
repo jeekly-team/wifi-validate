@@ -1,25 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.jyzn.wifi.validate.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.jyzn.wifi.validate.domain.ValidateCodeLog;
 import com.jyzn.wifi.validate.domain.ValidateLog;
 import com.jyzn.wifi.validate.domain.WifiUser;
 import com.jyzn.wifi.validate.service.ValidateService;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import net.sf.json.JSONObject;
+import javax.servlet.ServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springside.modules.utils.Clock;
 
 /**
@@ -34,11 +28,21 @@ public class MsgvalidateController {
     private ValidateService validateservice;
     private static final String validateType = "phmsg"; //验证类型
 
+    @RequestMapping(value = "/test")
+    public void test(ServletResponse response) throws IOException {
+        ImmutableMap<String, String> map = ImmutableMap.of("status", "sucess", "validateCode", "123456");
+        ObjectMapper om = new ObjectMapper();
+        response.setContentType("application/json;charset=UTF-8");
+        String s = om.writeValueAsString(map);
+        response.getWriter().write("t" + "(" + s + ")");
+    }
+
     @RequestMapping(value = "/getvalidatecode")
-    public void GetValidateCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String callbackFunName = request.getParameter("callbackparam"); //获取回调方法
-        String sid = request.getParameter("sid");//商户ID
-        String phoneNumber = request.getParameter("pn");//wifi用户电话号码
+    public void GetValidateCode(
+            @RequestParam(value = "callbackparam") String callbackFunName,
+            @RequestParam(value = "sid") String sid,
+            @RequestParam(value = "pn") String phoneNumber,
+            ServletResponse response) throws IOException {
 
         /*-----------------要返回的变量---------------------
          int djs;
@@ -49,6 +53,7 @@ public class MsgvalidateController {
         int vLogTotal = 0;
         int Status = 0;
         String Msg = null;
+        String FK = null;
         if (null != user) {
             ImmutableMap<?, ?> params = ImmutableMap.of("EQ_wifiuser.id", user.getId(), "EQ_sid", sid);
             vLogTotal = validateservice.countValidateLogByFilters((Map<String, Object>) params);
@@ -62,34 +67,62 @@ public class MsgvalidateController {
             Map<String, String> PostMsgCallBack = getMsgPostCallBack(phoneNumber);
             String PostStatus = PostMsgCallBack.get("status");
             if (StringUtils.isNotBlank(PostStatus) && "sucess".equals(PostStatus)) {
-                user = new WifiUser(phoneNumber, validateType);
-                validateservice.saveWifiUser(user);
-                ValidateLog log = new ValidateLog(user, sid, validateType, clock.getCurrentDate());
-                validateservice.saveValidateLog(log);
-                ValidateCodeLog vclog = new ValidateCodeLog(PostMsgCallBack.get("validateCode"), log);
-                validateservice.saveValidateCodeLog(vclog);
+                if (null != user) {
+                    ValidateLog log = new ValidateLog(user, sid, validateType, clock.getCurrentDate());
+                    validateservice.saveValidateLog(log);
+                    FK = log.getId();
+                    ValidateCodeLog vclog = new ValidateCodeLog(PostMsgCallBack.get("validateCode"), log);
+                    validateservice.saveValidateCodeLog(vclog);
+                } else {
+                    user = new WifiUser(phoneNumber);
+                    validateservice.saveWifiUser(user);
+                    ValidateLog log = new ValidateLog(user, sid, validateType, clock.getCurrentDate());
+                    validateservice.saveValidateLog(log);
+                    FK = log.getId();
+                    ValidateCodeLog vclog = new ValidateCodeLog(PostMsgCallBack.get("validateCode"), log);
+                    validateservice.saveValidateCodeLog(vclog);
+                }
+
                 Msg = "输入验证码开始网上冲浪";
+
             } else {
                 Msg = "短信发送失败,请重试!";
             }
-
         }
         if (1 == Status) {
             ValidateLog log = new ValidateLog(user, sid, validateType, clock.getCurrentDate());
             validateservice.saveValidateLog(log);
+            FK = log.getId();
             Msg = "免验证模式";
         }
         /*-------------------------------------------------*/
-        //构建返回JSONObject
-        JSONObject json = new JSONObject();
-        //回调JS方法
-        json.put("callbackparam", callbackFunName);
-        json.put("status", Status);
-        json.put("msg", Msg);
-        //response.setContentType("text/html;charset=UTF-8");  
+
+        ImmutableMap<?, ?> map = ImmutableMap.of("status", Status, "Msg", Msg, "fk", FK);
+        ObjectMapper om = new ObjectMapper();
+        String s = om.writeValueAsString(map);
+
         response.setContentType("application/json;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        out.write(callbackFunName + "(" + json.toString() + ")");
+        response.getWriter().write(callbackFunName + "(" + s + ")");
+
+    }
+
+    @RequestMapping(value = "/validatecode")
+    public void ValidateCode(
+            @RequestParam(value = "callbackparam") String callbackFunName,
+            @RequestParam(value = "fk") String fk,
+            @RequestParam(value = "vc") String Vc,
+            ServletResponse response) throws IOException {
+        int Status = 0;
+        String Msg = "";
+        if (Vc.equals(validateservice.getValidateCodeLogByValidateLogId(fk))) {
+            Status = 1;
+        }
+        ImmutableMap<?, ?> map = ImmutableMap.of("status", Status, "Msg", Msg);
+        ObjectMapper om = new ObjectMapper();
+        String s = om.writeValueAsString(map);
+
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(callbackFunName + "(" + s + ")");
     }
 
     private Map<String, String> getMsgPostCallBack(String phoneNumber) {

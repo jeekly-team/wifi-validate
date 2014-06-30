@@ -43,8 +43,8 @@ public class ValidateCodeLog extends StringIdEntity {
         this.vcode = vcode;
     }
 
+    @JoinColumn(name = "log_id")
     @OneToOne
-    @JoinColumn(name = "logid")
     public ValidateLog getVlog() {
         return vlog;
     }

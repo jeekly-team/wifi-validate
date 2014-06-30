@@ -5,6 +5,7 @@
  */
 package com.jyzn.wifi.validate.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,35 +15,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class WifiUser extends StringIdEntity {
 
     private String name;
-    private String category;
 
     public WifiUser() {
     }
 
-    public WifiUser(String id) {
-        this.id = id;
-    }
-
-    public WifiUser(String name, String category) {
-        super();
+    public WifiUser(String name) {
         this.name = name;
-        this.category = category;
     }
 
+    @Column(name = "name", unique = true, nullable = false, updatable = false)
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     @Override

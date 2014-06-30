@@ -1,0 +1,105 @@
+/**
+ *  Deal Post Request.
+ */
+package com.dc.util;
+import java.util.Map;
+import java.util.Iterator;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.HttpException;
+public class PostRequest implements java.io.Serializable {
+ private Map parameters;
+ private String url;
+ public PostRequest() {
+ }
+ public void setParameters(Map param) {
+  if (param != null)
+   parameters = param;
+ }
+ public Map getParameters() {
+  return parameters;
+ }
+ public void setUrl(String url) {
+  if (url != null && !(url.equals("")))
+   this.url = url;
+ }
+ public String getUrl() {
+  return url;
+ }
+ public String getPost() throws java.io.IOException, HttpException {
+  if (url == null || url.equals("") || parameters == null)
+   throw new IllegalStateException(
+     "Invalid url or parameters in PostBean.getPost method.");
+  String returnData = "";
+  HttpClient httpClient = new HttpClient();
+   
+  PostMethod postMethod = new PostMethod(url);
+  NameValuePair[] postData = getParams(parameters);
+   
+  postMethod.getParams().setContentCharset("GBK"); 
+   
+  postMethod.addParameters(postData);
+   
+  httpClient.executeMethod(postMethod);
+  if (postMethod.getStatusCode() == HttpStatus.SC_OK) {
+   returnData = postMethod.getResponseBodyAsString();
+  } else {
+   returnData = "error: " + postMethod.getStatusLine();
+  }
+  postMethod.releaseConnection();
+  return returnData;
+ }
+ private NameValuePair[] getParams(Map map) {
+  NameValuePair[] pairs = new NameValuePair[map.size()];
+  Iterator iter = map.keySet().iterator();
+  int i = 0;
+  while (iter.hasNext()) {
+   String key = (String) iter.next();
+   pairs[i] = new NameValuePair(key, (String) map.get(key));
+   i++;
+  }
+  return pairs;
+ }
+}
+实现方法：
+
+ public class DCSMSender{
+  
+ PostRequest pr = new PostRequest();
+  
+ public static String smsUrl = DomainGlobal.SMS_URL;
+  
+ private static DCSMSender instance = new DCSMSender();
+ public static DCSMSender getInstance() {
+  return instance;
+ }
+ private DCSMSender() {
+ }
+ 
+ /**
+  * 向指定手机号码（可多个）发送指定信息
+  * 
+  * @param cellPhones 手机号
+  * @param msg   短信内容
+  * @return    成功、失败
+  */
+ public boolean send(String[] cellPhones, String msg) {
+   
+  Map param = new HashMap();
+  String result = "";
+  param.put("cellPhones", java.util.Arrays.toString(cellPhones));
+  param.put("msg", DcipherTrans.cipher("system", msg, true));
+  pr.setParameters(param);
+  pr.setUrl(smsUrl);
+  try {
+   result = pr.getPost();
+   if ("1".equals(result)) return true;
+   else return false;
+  } catch (Exception e) {
+   e.printStackTrace();
+   return false;
+  }
+ }
+}

@@ -24,12 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+
 import org.springside.modules.utils.Clock;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = SampleDataJpaApplication.class)
-@WebAppConfiguration
 @ActiveProfiles("test")
 public class ValidateServiceTest {
 
@@ -60,7 +59,7 @@ public class ValidateServiceTest {
 
     @Test
     public void createAndsave() {
-        WifiUser user = new WifiUser("test" + random.nextInt(10000), "phmsg" + random.nextInt(10000));
+        WifiUser user = new WifiUser("test" + random.nextInt(10000));
         validateservice.saveWifiUser(user);
         assertNotNull(user.getId());
 

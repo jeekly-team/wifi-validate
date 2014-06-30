@@ -11,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -26,6 +27,7 @@ public class ValidateLog extends StringIdEntity {
     private String type; //本次验证类型如MSG,WX...
 
     private String sid; //商户ID
+    private ValidateCodeLog validateCodeLog;
 
     public ValidateLog() {
 
@@ -51,8 +53,8 @@ public class ValidateLog extends StringIdEntity {
     }
 
     // JPA 基于USER_ID列的多对一关系定义
-    @ManyToOne
     @JoinColumn(name = "wifiuser_id")
+    @ManyToOne
     public WifiUser getWifiuser() {
         return wifiuser;
     }
@@ -80,6 +82,15 @@ public class ValidateLog extends StringIdEntity {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    @OneToOne(mappedBy = "vlog")
+    public ValidateCodeLog getValidateCodeLog() {
+        return validateCodeLog;
+    }
+
+    public void setValidateCodeLog(ValidateCodeLog validateCodeLog) {
+        this.validateCodeLog = validateCodeLog;
     }
 
 }

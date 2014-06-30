@@ -67,6 +67,10 @@ public class ValidateService {
         return spec;
     }
 
+    public String getValidateCodeLogByValidateLogId(String id) {
+        return this.validatelogdao.findOne(id).getValidateCodeLog().getVcode();
+    }
+
     public WifiUser findWifiUserByName(String Name) {
         return this.wifiuserdao.findByName(Name);
     }
