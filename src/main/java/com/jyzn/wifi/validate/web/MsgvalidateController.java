@@ -10,6 +10,8 @@ import com.jyzn.wifi.validate.service.ValidateService;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,10 @@ public class MsgvalidateController {
 
     @Autowired
     private ValidateService validateservice;
-    
+
     @Autowired
     private PlatformService platformservice;
-    
+
     private static final String validateType = "phmsg"; //验证类型
 
     @Value("${jyzn.wifi.msgvalidate.url}")
@@ -66,20 +68,21 @@ public class MsgvalidateController {
         WifiUser user = validateservice.findWifiUserByName(phoneNumber);
         int vLogTotal = 0;
         int Status = 0;
-        String Msg = null;
-        String FK = null;
+        String Msg = "";
+        String FK = "";
+
         if (null != user) {
             ImmutableMap<?, ?> params = ImmutableMap.of("EQ_wifiuser.id", user.getId(), "EQ_sid", sid);
             vLogTotal = validateservice.countValidateLogByFilters((Map<String, Object>) params);
         }
+
         Status = getWifiUserStatus(vLogTotal);
-        if (-1 == Status) {
-            Msg = "您的验证次数超过限制";
-        }
         Clock clock = Clock.DEFAULT;
+        String PostStatus = "";
+
         if (0 == Status) {
             Map<String, String> PostMsgCallBack = getMsgPostCallBack(phoneNumber);
-            String PostStatus = PostMsgCallBack.get("status");
+            PostStatus = StringUtils.isNotBlank(PostMsgCallBack.get("status")) ? PostMsgCallBack.get("status") : "";
             if (StringUtils.isNotBlank(PostStatus) && "sucess".equals(PostStatus)) {
                 if (null != user) {
                     ValidateLog log = new ValidateLog(user, sid, validateType, clock.getCurrentDate());
@@ -109,9 +112,12 @@ public class MsgvalidateController {
             FK = log.getId();
             Msg = "免验证模式";
         }
+        if (-1 == Status) {
+            Msg = "您的验证次数超过限制";
+        }
         /*-------------------------------------------------*/
 
-        ImmutableMap<?, ?> map = ImmutableMap.of("status", Status, "Msg", Msg, "fk", FK);
+        ImmutableMap<?, ?> map = ImmutableMap.of("status", Status, "msg", Msg, "fk", FK, "poststatus", PostStatus);
         ObjectMapper om = new ObjectMapper();
         String s = om.writeValueAsString(map);
 
@@ -139,23 +145,27 @@ public class MsgvalidateController {
         response.getWriter().write(callbackFunName + "(" + s + ")");
     }
 
-    private Map<String, String> getMsgPostCallBack(String phoneNumber) throws IOException {
+    private Map<String, String> getMsgPostCallBack(String phoneNumber) {
         //短信接口
         Random random = new Random();
+        //random.nextInt(10000);//5位随机数字.
         int msg = random.nextInt(100000);
         //sname=kwsm&spwd=kwsm&scorpid=&sprdid=101&sdst=13910862579&smsg="+URLEncoder.encode("短信内容","utf-8");
         String PostData = "sname=" + accout + "&spwd=" + pwd + "&pn=" + phoneNumber + "&msg" + msg;
 
         //Map map = platformservice.HttpSendSmsCallback(url, PostData);
-        /*
         Map map = platformservice.HttpSendSmsTest(url, PostData);
-        map.put("validateCode", msg);
+        map.put("validateCode", "" + msg);
 
+        //输出JSON
         ObjectMapper om = new ObjectMapper();
-        om.writeValue(System.out, map);
-        //random.nextInt(10000);//5位随机数字.
-        */
-        ImmutableMap<String, String> map = ImmutableMap.of("status", "sucess", "validateCode", "123456");
+        try {
+            om.writeValue(System.out, map);
+        } catch (IOException ex) {
+            Logger.getLogger(MsgvalidateController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //ImmutableMap<String, String> map = ImmutableMap.of("status", "sucess", "validateCode", "123456");
         return map;
     }
     /*

@@ -5,9 +5,10 @@
  */
 package com.jyzn.wifi.validate.platforminterface;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public interface SmsInterface {
+public interface SmsInterface extends Serializable {
 
    public Map HttpSendSms(String postUrl, String postData);
     

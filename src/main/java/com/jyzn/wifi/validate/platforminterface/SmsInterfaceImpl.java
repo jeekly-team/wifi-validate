@@ -13,13 +13,13 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-
+import org.springframework.stereotype.Component;
 /**
  *
  * @author Administrator
  */
+@Component
 public class SmsInterfaceImpl implements SmsInterface {
-
     @Override
     public Map HttpSendSms(String postUrl, String postData) {
         String result = "";
