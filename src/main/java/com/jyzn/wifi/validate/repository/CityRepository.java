@@ -30,7 +30,7 @@ import org.springframework.data.repository.Repository;
  * JpaRepository：继承PagingAndSortingRepository，实现一组JPA规范相关的方法 
  * JpaSpecificationExecutor：比较特殊，不属于Repository体系，实现一组JPA Criteria查询相关的方法
  */
-public interface CityRepository extends Repository<City, Long> {
+public interface CityRepository extends Repository<City, String> {
 
     Page<City> findAll(Pageable pageable);
 

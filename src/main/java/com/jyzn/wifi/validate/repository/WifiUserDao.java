@@ -7,9 +7,10 @@
 package com.jyzn.wifi.validate.repository;
 
 import com.jyzn.wifi.validate.domain.WifiUser;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 
-public interface WifiUserDao extends CrudRepository<WifiUser, String>{
+public interface WifiUserDao extends PagingAndSortingRepository<WifiUser, String>,JpaSpecificationExecutor<WifiUser>{
     
 }

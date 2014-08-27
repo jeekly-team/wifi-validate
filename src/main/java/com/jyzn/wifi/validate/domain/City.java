@@ -21,7 +21,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "city")
-public class City extends IdEntity {
+public class City extends StringIdEntity {
 
     private static final long serialVersionUID = 1L;
     /*

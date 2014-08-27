@@ -15,28 +15,23 @@
  */
 package com.jyzn.wifi.validate;
 
-import javax.sql.DataSource;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
-//@ImportResource("classpath:setup-database.xml")
 @EnableTransactionManagement
 @EnableAutoConfiguration
 @Configuration
 @ComponentScan(basePackages = "com.jyzn.wifi.validate")
 @EnableJpaRepositories
 public class SampleDataJpaApplication {
-
+/*
     @Autowired
     DataSource dataSource;
 
@@ -48,6 +43,7 @@ public class SampleDataJpaApplication {
         return sessionFactory;
     }
 
+    
     @Bean
     @Autowired
     public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
@@ -55,34 +51,9 @@ public class SampleDataJpaApplication {
         txManager.setSessionFactory(sessionFactory);
         return txManager;
     }
-
+*/
     public static void main(String[] args) throws Exception {
         SpringApplication.run(SampleDataJpaApplication.class, args);
     }
      
-    /*
-    // 另一种方法，写死
-     @Bean
-     public DataSource dataSource() {
-     EmbeddedDatabaseBuilder embeddedDatabaseBuilder = new EmbeddedDatabaseBuilder();
-     return embeddedDatabaseBuilder.setType(EmbeddedDatabaseType.H2).build();
-
-     }
-
-     @Bean
-     public LocalSessionFactoryBean sessionFactory() {
-     LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-     sessionFactory.setDataSource(dataSource());
-     sessionFactory.setPackagesToScan(new String[]{"com.jyzn.wifi.validate.domain"});
-     return sessionFactory;
-     }
-
-     @Bean
-     public HibernateTransactionManager transactionManager() {
-     HibernateTransactionManager txManager = new HibernateTransactionManager();
-     txManager.setSessionFactory(sessionFactory().getObject());
-     txManager.setHibernateManagedSession(true);
-     return txManager;
-     }
-     */
 }

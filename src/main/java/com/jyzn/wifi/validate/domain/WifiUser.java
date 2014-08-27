@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "wifiuser")
-public class WifiUser extends IdEntity {
+public class WifiUser extends StringIdEntity {
 
     private String name;
     private String category;

@@ -17,7 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
  *
  */
 @MappedSuperclass
-public class IdEntity implements Serializable {
+public class StringIdEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "validatelog")
-public class ValidateLog extends IdEntity {
+public class ValidateLog extends StringIdEntity {
 
     private Date dt;     //提交日期
 
