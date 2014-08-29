@@ -22,18 +22,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.jyzn.wifi.validate.service.CityService;
+
 
 @Controller
 public class SampleController {
-
-	@Autowired
-	private CityService cityService;
 
 	@RequestMapping("/")
 	@ResponseBody
 	@Transactional(readOnly = true)
 	public String helloWorld() {
-		return this.cityService.getCity("Bath", "UK").getName();
+		//return this.cityService.getCity("Bath", "UK").getName();
+            return "";
 	}
 }
