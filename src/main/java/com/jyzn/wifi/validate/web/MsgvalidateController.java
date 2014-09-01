@@ -5,12 +5,15 @@ import com.google.common.collect.ImmutableMap;
 import com.jyzn.wifi.validate.domain.ValidateCodeLog;
 import com.jyzn.wifi.validate.domain.ValidateLog;
 import com.jyzn.wifi.validate.domain.WifiUser;
+import com.jyzn.wifi.validate.service.PlatformService;
 import com.jyzn.wifi.validate.service.ValidateService;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Random;
 import javax.servlet.ServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +29,18 @@ public class MsgvalidateController {
 
     @Autowired
     private ValidateService validateservice;
+    
+    @Autowired
+    private PlatformService platformservice;
+    
     private static final String validateType = "phmsg"; //验证类型
+
+    @Value("${jyzn.wifi.msgvalidate.url}")
+    private String url;
+    @Value("${jyzn.wifi.msgvalidate.accout}")
+    private String accout;
+    @Value("${jyzn.wifi.msgvalidate.pwd}")
+    private String pwd;
 
     @RequestMapping(value = "/test")
     public void test(ServletResponse response) throws IOException {
@@ -125,10 +139,23 @@ public class MsgvalidateController {
         response.getWriter().write(callbackFunName + "(" + s + ")");
     }
 
-    private Map<String, String> getMsgPostCallBack(String phoneNumber) {
+    private Map<String, String> getMsgPostCallBack(String phoneNumber) throws IOException {
         //短信接口
-        ImmutableMap<String, String> map = ImmutableMap.of("status", "sucess", "validateCode", "123456");
+        Random random = new Random();
+        int msg = random.nextInt(100000);
+        //sname=kwsm&spwd=kwsm&scorpid=&sprdid=101&sdst=13910862579&smsg="+URLEncoder.encode("短信内容","utf-8");
+        String PostData = "sname=" + accout + "&spwd=" + pwd + "&pn=" + phoneNumber + "&msg" + msg;
 
+        //Map map = platformservice.HttpSendSmsCallback(url, PostData);
+        /*
+        Map map = platformservice.HttpSendSmsTest(url, PostData);
+        map.put("validateCode", msg);
+
+        ObjectMapper om = new ObjectMapper();
+        om.writeValue(System.out, map);
+        //random.nextInt(10000);//5位随机数字.
+        */
+        ImmutableMap<String, String> map = ImmutableMap.of("status", "sucess", "validateCode", "123456");
         return map;
     }
     /*

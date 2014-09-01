@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @EnableAutoConfiguration
 @Configuration
-@ComponentScan(basePackages = "com.jyzn.wifi.validate")
+@ComponentScan
 public class SampleDataJpaApplication {
     /*
      @Autowired

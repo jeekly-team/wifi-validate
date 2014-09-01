@@ -31,6 +31,7 @@ public class SampleDataJpaApplicationTests {
 
     @Autowired
     private WebApplicationContext context;
+    
 
     private MockMvc mvc;
     private static final Logger logger = LoggerFactory.getLogger(SampleDataJpaApplicationTests.class);
@@ -43,7 +44,7 @@ public class SampleDataJpaApplicationTests {
     @Test
     public void testHome() throws Exception {
         this.mvc.perform(get("/")).andExpect(status().isOk())
-                .andExpect(content().string(""));
+                .andExpect(content().string("")); 
     }
 
     /*
