@@ -67,20 +67,15 @@ public class MsgvalidateController {
         /*-------------------------------------------------*/
         WifiUser user = validateservice.findWifiUserByName(phoneNumber);
         int vLogTotal = 0;
-        int Status = 0;
         String Msg = "";
         String FK = "";
-
+        Clock clock = Clock.DEFAULT;
+        String PostStatus = "";
         if (null != user) {
             ImmutableMap<?, ?> params = ImmutableMap.of("EQ_wifiuser.id", user.getId(), "EQ_sid", sid);
             vLogTotal = validateservice.countValidateLogByFilters((Map<String, Object>) params);
         }
-
-        Status = getWifiUserStatus(vLogTotal);
-        Clock clock = Clock.DEFAULT;
-        String PostStatus = "";
-
-        if (0 == Status) {
+        if (0 == vLogTotal) {
             Map<String, String> PostMsgCallBack = getMsgPostCallBack(phoneNumber);
             PostStatus = StringUtils.isNotBlank(PostMsgCallBack.get("status")) ? PostMsgCallBack.get("status") : "";
             if (StringUtils.isNotBlank(PostStatus) && "sucess".equals(PostStatus)) {
@@ -99,25 +94,19 @@ public class MsgvalidateController {
                     ValidateCodeLog vclog = new ValidateCodeLog(PostMsgCallBack.get("validateCode"), log);
                     validateservice.saveValidateCodeLog(vclog);
                 }
-
                 Msg = "输入验证码开始网上冲浪";
-
             } else {
                 Msg = "短信发送失败,请重试!";
             }
-        }
-        if (1 == Status) {
+        } else {
             ValidateLog log = new ValidateLog(user, sid, validateType, clock.getCurrentDate());
             validateservice.saveValidateLog(log);
             FK = log.getId();
             Msg = "免验证模式";
         }
-        if (-1 == Status) {
-            Msg = "您的验证次数超过限制";
-        }
-        /*-------------------------------------------------*/
 
-        ImmutableMap<?, ?> map = ImmutableMap.of("status", Status, "msg", Msg, "fk", FK, "poststatus", PostStatus);
+        /*-------------------------------------------------*/
+        ImmutableMap<?, ?> map = ImmutableMap.of("status", vLogTotal, "msg", Msg, "fk", FK, "poststatus", PostStatus);
         ObjectMapper om = new ObjectMapper();
         String s = om.writeValueAsString(map);
 
@@ -167,27 +156,6 @@ public class MsgvalidateController {
 
         //ImmutableMap<String, String> map = ImmutableMap.of("status", "sucess", "validateCode", "123456");
         return map;
-    }
-    /*
-     获取用户的状态
-     * status(0,1,-1)
-     * 0为库中没有 要求填写验证码
-     * 1为库中已有 免验证
-     * -1为此号码已n次验证 用户未能输入验证码 当天内拒绝此号码再次验证
-     */
-
-    private int getWifiUserStatus(int c) {
-        int ret = 0;
-        if (c == 0) {
-            ret = 0;
-        }
-        if (c > 0 && c < 3) {
-            ret = 1;
-        }
-        if (c > 0 && c >= 2) {
-            ret = -1;
-        }
-        return ret;
     }
 
 }
